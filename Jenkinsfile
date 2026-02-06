@@ -13,15 +13,14 @@ pipeline {
         stage('Start Minikube') {
             steps {
                 sh '''
-                minikube status || minikube start --driver=docker
+                minikube status || minikube start --driver=none
                 '''
             }
         }
 
-        stage('Build Docker Image in Minikube') {
+        stage('Build Docker Image') {
             steps {
                 sh '''
-                eval $(minikube docker-env)
                 docker build -t hello-ci .
                 '''
             }
