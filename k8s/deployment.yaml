@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-ci
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-ci
+  template:
+    metadata:
+      labels:
+        app: hello-ci
+    spec:
+      containers:
+      - name: hello-ci
+        image: hello-ci
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+
