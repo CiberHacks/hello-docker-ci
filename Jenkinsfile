@@ -2,21 +2,32 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/CiberHacks/hello-docker-ci.git'
+                git branch: 'main',
+                    url: 'https://github.com/CiberHacks/hello-docker-ci.git'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Docker Image in Minikube') {
             steps {
-                sh 'docker build -t hello-ci:${BUILD_NUMBER} .'
+                script {
+                    sh '''
+                    eval $(minikube docker-env)
+                    docker build -t hello-ci .
+                    '''
+                }
             }
         }
 
-        stage('Test Image') {
+        stage('Deploy to Kubernetes (Minikube)') {
             steps {
-                sh 'docker images'
+                script {
+                    sh '''
+                    kubectl apply -f k8s/
+                    '''
+                }
             }
         }
     }
