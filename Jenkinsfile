@@ -10,24 +10,28 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image in Minikube') {
+        stage('Start Minikube') {
             steps {
-                script {
-                    sh '''
-                    eval $(minikube docker-env)
-                    docker build -t hello-ci .
-                    '''
-                }
+                sh '''
+                minikube status || minikube start --driver=docker
+                '''
             }
         }
 
-        stage('Deploy to Kubernetes (Minikube)') {
+        stage('Build Docker Image in Minikube') {
             steps {
-                script {
-                    sh '''
-                    kubectl apply -f k8s/
-                    '''
-                }
+                sh '''
+                eval $(minikube docker-env)
+                docker build -t hello-ci .
+                '''
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh '''
+                kubectl apply -f k8s/
+                '''
             }
         }
     }
